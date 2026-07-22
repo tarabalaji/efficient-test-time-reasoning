@@ -1,0 +1,17 @@
+datasets
+pandas
+numpy
+scikit-learn
+xgboost
+sentence-transformers
+scipy
+matplotlib
+pyyaml
+python-dotenv
+tqdm
+joblib
+openai
+tenacity
+jupyter
+ipykernel
+pytest
