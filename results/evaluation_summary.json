@@ -1,0 +1,13 @@
+{
+  "recommended_policy": "fixed_2",
+  "validation_accuracy": 0.94,
+  "baseline_accuracy": 0.94,
+  "accuracy_difference": 0.0,
+  "average_attempts": 2.0,
+  "attempt_savings_rate": 0.5,
+  "token_savings_rate": 0.5025157955198162,
+  "incorrect_early_stops": 0,
+  "protected_from_regression": 0,
+  "fixed_4_average_attempts": 4.0,
+  "fixed_2_accuracy": 0.94
+}
