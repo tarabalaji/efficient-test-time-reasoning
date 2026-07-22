@@ -63,33 +63,58 @@ def create_output_directory(
 
 
 def select_recommended_policy(
-    validation_results: pd.DataFrame,
+    summary: pd.DataFrame,
 ) -> pd.Series:
-    baseline_accuracy = float(validation_results["final_accuracy"].max())
+    policy_results = summary.groupby("policy", as_index=False).agg(
+        minimum_accuracy=("accuracy", "min"),
+        mean_accuracy=("accuracy", "mean"),
+        total_incorrect_early_stops=(
+            "incorrect_early_stops",
+            "sum",
+        ),
+        average_attempts=(
+            "average_attempts",
+            "mean",
+        ),
+        mean_token_savings=(
+            "token_savings_rate",
+            "mean",
+        ),
+    )
 
-    eligible = validation_results[
-        validation_results["accuracy"] >= baseline_accuracy
+    baseline_accuracy = summary[
+        summary["policy"] == f"fixed_{int(summary['average_maximum_attempts'].max())}"
+    ]["accuracy"].min()
+
+    eligible = policy_results[
+        policy_results["minimum_accuracy"] >= baseline_accuracy
     ].copy()
 
     if eligible.empty:
-        eligible = validation_results.copy()
+        eligible = policy_results.copy()
 
     eligible = eligible.sort_values(
         [
-            "accuracy",
-            "incorrect_early_stops",
+            "total_incorrect_early_stops",
+            "minimum_accuracy",
+            "mean_accuracy",
             "average_attempts",
-            "token_savings_rate",
+            "mean_token_savings",
         ],
         ascending=[
-            False,
             True,
+            False,
+            False,
             True,
             False,
         ],
     )
 
-    return eligible.iloc[0]
+    selected_policy = eligible.iloc[0]["policy"]
+
+    return summary[
+        (summary["policy"] == selected_policy) & (summary["split"] == "validation")
+    ].iloc[0]
 
 
 def create_ranked_table(
@@ -454,7 +479,7 @@ def main() -> None:
 
     ranked_table = create_ranked_table(summary)
 
-    recommended = select_recommended_policy(validation_results)
+    recommended = select_recommended_policy(summary)
 
     report = create_recommendation_report(
         recommended,
