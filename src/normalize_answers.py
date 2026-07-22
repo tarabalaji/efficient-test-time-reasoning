@@ -14,9 +14,9 @@ def normalize_answer(answer: str | None) -> str | None:
     if not cleaned:
         return None
 
-    cleaned = cleaned.replace(",", "")
-    cleaned = cleaned.replace("$", "")
     cleaned = cleaned.replace("\\$", "")
+    cleaned = cleaned.replace("$", "")
+    cleaned = cleaned.replace(",", "")
     cleaned = cleaned.replace("\\%", "%")
     cleaned = cleaned.replace("\\,", "")
     cleaned = cleaned.strip()
